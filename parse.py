@@ -1,4 +1,5 @@
 import json
+from astar import astar
 
 def dijkstra(graph, edges, initial):
   visited = {initial: 0}
@@ -58,3 +59,9 @@ for road in all_data['features']:
                 graph[from_coord] = []
             graph[from_coord].append(to_coord)
             dist[(from_coord, to_coord)] = road['properties']['LENGTH_M']
+
+start = (-80.5328174269999, 43.4732988380001)
+end = (-80.5002613569999,43.511091493)
+for (a, b) in astar(start, end, graph, dist):
+    print(b, ',', a)
+
