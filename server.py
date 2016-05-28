@@ -31,8 +31,9 @@ def get_roads_count():
 
 @app.route('/roads')
 def get_roads():
-    start = request.args.get('start', 0)
-    offset = request.args.get('offset', 200)
+    start = int(request.args.get('start', 0))
+    offset = int(request.args.get('offset', 200))
+    print start, offset
     roads = []
     for feature in features[start:start+offset]:
         coordinates = feature['geometry']['coordinates']
@@ -54,6 +55,7 @@ def get_roads():
 
     ret_val = {'roads': roads}
     return flask.jsonify(**ret_val)
+
 
 if __name__ == '__main__':
     with open('roads.json', 'r') as f:
