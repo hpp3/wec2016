@@ -52,6 +52,7 @@ def getCoords(input_list=[7294, 274, 389]):
     coord = []
     for i in input_list:
         coord.extend(seg_to_coord[i])
+    coord = [[y,x] for x, y in coord]
     return coord
 
 
@@ -60,6 +61,7 @@ def getClosures(input_list=[7294, 274, 389]):
     for i in input_list:
         if i in black_list:
             coord.append(seg_to_coord[i])
+    coord = [[[y,x] for x, y in kappa] for kappa in coord]
     return coord
 
 
@@ -109,6 +111,5 @@ def getPaths(input_list=[7294, 274, 389]):
             c = seg_to_coord[seg]
             c = [(b,a) for a, b in c]
             coord.extend(c)
-        #coord = [i for i in reversed(coord)]
         pathCoords.append(coord)
     return pathCoords

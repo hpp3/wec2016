@@ -116,7 +116,7 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
             data: $scope.segmentIds,
             url: '/original'
         }).then(function successCallback(response) {
-            var originalCoords = response.data.original_path;
+            var originalCoords = [response.data.original_path];
             var optimalPaths = [];
             _.each(originalCoords, function(pathCoords) {
                 var line = new L.Polyline(pathCoords, {
