@@ -79,15 +79,14 @@ def getPaths(input_list=[7294, 274, 389]):
                 break
             top = max(seg, key=lambda s: dist[s])
             segblacklist.add(top)
-            seg.remove(top) new = astar(start, end, graph, dist, segblacklist)
+            seg.remove(top) 
+            new = astar(start, end, graph, dist, segblacklist)
         if new not in bestPaths:
             bestPaths.append(new)
 
     pathCoords = []
     for path in bestPaths:
-        seg = set()
-        p = list(reversed(path))
-        coord = []
+        seg = set() p = list(reversed(path)) coord = []
         for i in range(1, len(p)):
             seg = coord_to_seg[(p[i-1], p[i])]
             coord.extend(seg_to_coord[seg])
