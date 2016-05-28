@@ -2,3 +2,9 @@
     margin-top: 20px;
     height: 550px;
 }
+
+.road-legend {
+    background: lightblue;
+    opacity: 0.9;
+    padding: 10px;
+}

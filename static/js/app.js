@@ -52,6 +52,7 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
     }, function errorCallback(response) {
         console.log('error', response);
     });
+    addLegend();
 
     var closures = [];
 
@@ -87,22 +88,35 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
     $scope.optimalPaths = [];
     $scope.pathsReturned = false;
     $scope.getOptimalRoute = function() {
+
+        var LeafIcon = L.Icon.extend({
+            options: {
+                shadowUrl: 'static/images/leaf-shadow.png',
+                iconSize:     [38, 95],
+                shadowSize:   [50, 64],
+                iconAnchor:   [22, 94],
+                shadowAnchor: [4, 62],
+                popupAnchor:  [-3, -76]
+            }
+        });
+
+        var greenIcon = new LeafIcon({iconUrl: 'static/images/leaf-green.png'}),
+            redIcon = new LeafIcon({iconUrl: 'static/images/leaf-red.png'}),
+            orangeIcon = new LeafIcon({iconUrl: 'static/images/leaf-orange.png'});
+
+        var iconSelection = [greenIcon, redIcon, orangeIcon];
+
         $http({
             method: 'POST',
             data: $scope.segmentIds,
             url: '/optimal'
         }).then(function successCallback(response) {
-            var optimalCoords = [response.data.optimal_paths[0]];
-            var optimalPaths = [];
-            _.each(optimalCoords, function(pathCoords) {
-                var line = new L.Polyline(pathCoords, {
-                    color: 'green',
-                    weight: 5,
-                    opacity: 1,
-                    smoothFactor: 1
+            var optimalCoords = response.data.optimal_paths;
+
+            _.each(optimalCoords, function(pathCoords, idx) {
+                _.each(pathCoords, function (coord) {
+                   var marker = L.marker(coord, {icon: iconSelection[idx]}).addTo(map);
                 });
-                optimalPaths.push(line);
-                line.addTo(map);
             });
             $scope.optimalPaths = optimalPaths;
         }, function errorCallback(response) {
@@ -133,5 +147,54 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
             console.log('error', response);
         });
     };
+
+    function addLegend() {
+        var legend = L.control({position: 'bottomright'});
+
+        legend.onAdd = function(map) {
+
+            var div = L.DomUtil.create('div', 'road-legend');
+            var labels = [
+                {
+                    color: 'red',
+                    label: 'Closure'
+                },
+                {
+                    color: 'yellow',
+                    label: 'Original Route'
+                }
+            ];
+
+            var labelsOptimal = [
+                {
+                    color: 'Green Leafs',
+                    label: 'Most optimal route'
+                },
+                {
+                    color: 'Red Leafs',
+                    label: 'Second most optimal Route'
+                },
+                {
+                    color: 'Orange Leafs',
+                    label: 'Third most optimal Route'
+                }
+            ];
+
+            // loop through our density intervals and generate a label with a colored square for each interval
+            div.innerHTML += '<ul class="list-unstyled">';
+            for (var i = 0; i < labels.length; i++) {
+                div.innerHTML += '<li><span style="background:' + labels[i].color + '">&#x25A2;</span>&nbsp;&nbsp;' + labels[i].label + '</li>'
+            }
+
+            for (var i = 0; i < labelsOptimal.length; i++) {
+                div.innerHTML += '<li>' + labelsOptimal[i].color + ' - ' + labelsOptimal[i].label + '</li>';
+            }
+            div.innerHTML += '</ul>';
+
+            return div;
+        };
+
+        legend.addTo(map);
+    }
 
 }]);

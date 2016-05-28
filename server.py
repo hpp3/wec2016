@@ -20,6 +20,11 @@ def send_css(path):
     return send_from_directory('css', path)
 
 
+@app.route('/images/<path:path>')
+def send_images(path):
+    return send_from_directory('images', path)
+
+
 @app.route('/')
 def home():
     return app.send_static_file('index.html')
