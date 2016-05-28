@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="road">
 <head>
     <meta charset="UTF-8">
     <title>Road Closure</title>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link rel="stylesheet" href="static/css/leaflet.css" />
     <link rel="stylesheet" href="static/css/default.css">
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.5/angular.js"></script>
-    <script src="static/js/lib/angular-leaflet-directive.min.js"></script>
-    <script src="static/js/app.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.min.js"></script>
+    <script type="text/javascript" src="static/js/app.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container" ng-controller="MapController">
         <div class="row">
             <div class="col-md-12">
                 <div id="mapid"></div>

@@ -6,7 +6,8 @@ app = Flask(__name__, static_url_path='/static')
 
 data = None
 features = None
-
+closures = None
+closures_features = None
 
 @app.route('/js/<path:path>')
 def send_js(path):
@@ -29,12 +30,9 @@ def get_roads_count():
     return flask.jsonify(**ret_val)
 
 
-@app.route('/roads')
-def get_roads():
-    start = request.args.get('start', 0)
-    offset = request.args.get('offset', 200)
-    roads = []
-    for feature in features[start:start+offset]:
+def process_coordinates(input_features):
+    roads_with_coordinates = []
+    for feature in input_features:
         coordinates = feature['geometry']['coordinates']
         if feature['geometry']['type'] == 'MultiLineString':
             coordinates_flatten = []
@@ -50,14 +48,34 @@ def get_roads():
             'geo_type': feature['geometry']['type'],
             'coords': coordinates
         }
-        roads.append(road)
+        roads_with_coordinates.append(road)
+    return roads_with_coordinates
+
+
+@app.route('/roads')
+def get_roads():
+    start = int(request.args.get('start', 0))
+    offset = int(request.args.get('offset', 200))
+    roads = process_coordinates(features[start:start+offset])
 
     ret_val = {'roads': roads}
     return flask.jsonify(**ret_val)
+
+
+@app.route('/closures')
+def get_closures():
+    closures = process_coordinates(closures_features)
+    ret_val = {'closures': closures}
+    return flask.jsonify(**ret_val)
+
 
 if __name__ == '__main__':
     with open('roads.json', 'r') as f:
         data = json.load(f)
         features = data['features']
+
+    with open('closures.json', 'r') as f:
+        closures = json.load(f)
+        closures_features = closures['features']
 
     app.run(debug=True)
