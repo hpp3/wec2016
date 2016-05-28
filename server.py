@@ -66,13 +66,13 @@ def get_roads():
 def get_closures():
     closures = process_coordinates(closures_features)
     ret_val = {'closures': closures}
-    return flask.jsonify(*ret_val)
+    return flask.jsonify(**ret_val)
 
 
-@app.route('/optimal')
+@app.route('/optimal', methods=['POST'])
 def get_optimal(segment_ids):
     segment_ids = map(int, segment_ids.split(","))
-    ret_val = parse.getPaths(segment_ids)
+    ret_val = {'optimal_paths': parse.getPaths(segment_ids)}
     return flask.jsonify(**ret_val)
 
 

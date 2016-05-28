@@ -57,6 +57,30 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
 
     function getClosures() {
         $http({
+          method: 'GET',
+          url: '/closures'
+        }).then(function successCallback(response) {
+            closures = response.data.closures;
+
+            _.each(closures, function(road) {
+                var coordinates = road.coords;
+                if (coordinates && coordinates.length) {
+                    var line = new L.Polyline(coordinates, {
+                        color: 'red',
+                        weight: 3,
+                        opacity: 0.5,
+                        smoothFactor: 1
+                    });
+                    line.addTo(map);
+                }
+            });
+        }, function errorCallback(response) {
+            console.log('error', response);
+        });
+    }
+
+    $scope.getOptimalRoute = function() {
+        $http({
             method: 'POST',
             data: $scope.segmentIds,
             url: '/optimal'
