@@ -76,11 +76,26 @@ def get_closures():
     return flask.jsonify(**ret_val)
 
 
+@app.route('/segments')
+def get_segments():
+    segments = {}
+    for feature in features:
+        props = feature['properties']
+        id = props['SEGMENT_ID']
+        segments[id] = {
+            'st': props['STREET_NM'],
+            'from': props['FROM_STR'],
+            'to': props['TO_STR']
+        }
+    return flask.jsonify(segments)
+
+
 @app.route('/optimal', methods=['POST'])
 def get_optimal():
     input = request.data
     segment_ids = map(int, input.split(","))
-    ret_val = {'optimal_paths': parse.getPaths(segment_ids)}
+    optimal_coords, optimal_segs = parse.getPaths(segment_ids)
+    ret_val = {'optimal_paths': optimal_coords, 'optimal_segs': optimal_segs}
     return flask.jsonify(**ret_val)
 
 

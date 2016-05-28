@@ -3,10 +3,26 @@ var app = angular.module('road', []);
 app.controller('MapController', ['$scope', '$http', function($scope, $http) {
     var map = L.map('mapid').setView([43.4643, -80.5204], 15);
     var roads = [];
+    var optimalPathMarkers = [];
+    var originalPath;
+    $scope.segments = {};
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+    function getSegments() {
+        $http({
+          method: 'GET',
+          url: '/segments'
+        }).then(function successCallback(response) {
+            $scope.segments = response.data;
+        }, function errorCallback(response) {
+            console.log('error', response);
+        });
+    }
+
+    getSegments();
 
     $http({
       method: 'GET',
@@ -81,12 +97,29 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
     }
 
     $scope.getPaths = function() {
-        $scope.getOptimalRoute();
-        $scope.getOriginal();
+        if ($scope.segmentIds) {
+            $scope.getOptimalRoute();
+            $scope.getOriginal();
+        }
     };
 
-    $scope.optimalPaths = [];
-    $scope.pathsReturned = false;
+    $scope.removePaths = function() {
+        // Remove optimal routes
+        _.each(optimalPathMarkers, function(marker) {
+           map.removeLayer(marker);
+        });
+        optimalPathMarkers = [];
+
+        // Remove original path
+        map.removeLayer(originalPath);
+        originalPath = null;
+
+        $scope.showOptimal = false;
+        $scope.showOriginal = false;
+        $scope.optDesc = 0;
+    };
+
+    $scope.showOptimal = false;
     $scope.getOptimalRoute = function() {
 
         var LeafIcon = L.Icon.extend({
@@ -112,18 +145,28 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
             url: '/optimal'
         }).then(function successCallback(response) {
             var optimalCoords = response.data.optimal_paths;
+            var optimalSegs = response.data.optimal_segs;
 
             _.each(optimalCoords, function(pathCoords, idx) {
                 _.each(pathCoords, function (coord) {
                    var marker = L.marker(coord, {icon: iconSelection[idx]}).addTo(map);
+                   optimalPathMarkers.push(marker);
                 });
             });
-            $scope.optimalPaths = optimalPaths;
+
+            var optimalSegDescriptions = [];
+            _.each(optimalSegs, function(segSequence) {
+                var segSequenceDescription = segIdsToDescriptions(segSequence);
+                optimalSegDescriptions.push(segSequenceDescription);
+            });
+            $scope.optimalSegDescriptions = optimalSegDescriptions;
+            $scope.showOptimal = true;
         }, function errorCallback(response) {
             console.log('error', response);
         });
     };
 
+    $scope.showOriginal = false;
     $scope.getOriginal = function() {
         $http({
             method: 'POST',
@@ -131,7 +174,6 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
             url: '/original'
         }).then(function successCallback(response) {
             var originalCoords = [response.data.original_path];
-            var optimalPaths = [];
             _.each(originalCoords, function(pathCoords) {
                 var line = new L.Polyline(pathCoords, {
                     color: 'yellow',
@@ -139,13 +181,17 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
                     opacity: 1,
                     smoothFactor: 1
                 });
-                optimalPaths.push(line);
                 line.addTo(map);
+                originalPath = line;
             });
-            $scope.optimalPaths = optimalPaths;
+
+            $scope.showOriginal = true;
         }, function errorCallback(response) {
             console.log('error', response);
         });
+
+        var segmentParts = $scope.segmentIds.split(',');
+        $scope.originalSegmentDescriptions = segIdsToDescriptions(segmentParts);
     };
 
     function addLegend() {
@@ -195,6 +241,21 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
         };
 
         legend.addTo(map);
+    }
+
+    function segIdsToDescriptions(segmentParts) {
+        var segmentIds = _.map(segmentParts, function(s) {
+           return $.trim(s);
+        });
+        var segmentDescriptions = _.map(segmentIds, function(segId) {
+            return '(' + segId.toString() + ') ' + $scope.segments[segId]['st'] + ' from ' + $scope.segments[segId]['from'] + ' to ' + $scope.segments[segId]['to'];
+        });
+        return segmentDescriptions;
+    }
+
+    $scope.optDesc = 0;
+    $scope.setOptDesc = function(id) {
+        $scope.optDesc = id;
     }
 
 }]);

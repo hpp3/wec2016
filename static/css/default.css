@@ -3,6 +3,14 @@
     height: 550px;
 }
 
+.top-buffer {
+    margin-top: 10px;
+}
+
+.right-buffer {
+    margin-right: 10px;
+}
+
 .road-legend {
     background: lightblue;
     opacity: 0.9;

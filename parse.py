@@ -102,14 +102,18 @@ def getPaths(input_list=[7294, 274, 389]):
             bestPaths.append(new)
 
     pathCoords = []
+    pathSegs = []
     for path in bestPaths:
         seg = set() 
-        p = list(reversed(path)) 
+        p = list(reversed(path))
+        segs = []
         coord = []
         for i in range(1, len(p)):
             seg = coord_to_seg[(p[i-1], p[i])]
+            segs.append(seg)
             c = seg_to_coord[seg]
             c = [(b,a) for a, b in c]
             coord.extend(c)
+        pathSegs.append(segs)
         pathCoords.append(coord)
-    return pathCoords
+    return pathCoords, pathSegs
