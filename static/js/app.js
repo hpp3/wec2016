@@ -86,16 +86,6 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
             url: '/optimal'
         }).then(function successCallback(response) {
             console.log('optimal', response);
-            //var segmentIdsList = segmentIds.split(',');
-            //if (coordinates && coordinates.length) {
-            //    var line = new L.Polyline(coordinates, {
-            //        color: 'red',
-            //        weight: 3,
-            //        opacity: 0.5,
-            //        smoothFactor: 1
-            //    });
-            //    line.addTo(map);
-            //}
         }, function errorCallback(response) {
             console.log('error', response);
         });
