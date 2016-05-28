@@ -82,7 +82,7 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
     $scope.getOptimalRoute = function() {
         $http({
             method: 'POST',
-            data: $scope.segmentIds,
+            data: {segment_ids: $scope.segmentIds},
             url: '/optimal'
         }).then(function successCallback(response) {
             console.log('optimal', response);

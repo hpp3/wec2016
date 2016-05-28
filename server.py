@@ -70,8 +70,9 @@ def get_closures():
 
 
 @app.route('/optimal', methods=['POST'])
-def get_optimal(segment_ids):
-    segment_ids = map(int, segment_ids.split(","))
+def get_optimal():
+    input = request.data
+    segment_ids = map(int, input.split(","))
     ret_val = {'optimal_paths': parse.getPaths(segment_ids)}
     return flask.jsonify(**ret_val)
 
