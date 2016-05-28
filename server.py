@@ -1,6 +1,7 @@
 import json
 import parse
 import flask
+import copy
 from flask import Flask, request, send_from_directory
 app = Flask(__name__, static_url_path='/static')
 
@@ -31,8 +32,9 @@ def get_roads_count():
 
 
 def process_coordinates(input_features):
+    input_copy = copy.deepcopy(input_features)
     roads_with_coordinates = []
-    for feature in input_features:
+    for feature in input_copy:
         coordinates = feature['geometry']['coordinates']
         if feature['geometry']['type'] == 'MultiLineString':
             coordinates_flatten = []
