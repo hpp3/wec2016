@@ -83,7 +83,8 @@ def get_optimal():
 def get_original():
     input = request.data
     segment_ids = map(int, input.split(","))
-    ret_val = {'original_path': parse.getCoords(segment_ids)}
+    ret_val = {'original_path': parse.getCoords(segment_ids),
+            'closures': parse.getClosures(segment_ids)}
     return flask.jsonify(**ret_val)
 
 

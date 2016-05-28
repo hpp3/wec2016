@@ -54,6 +54,15 @@ def getCoords(input_list=[7294, 274, 389]):
         coord.extend(seg_to_coord[i])
     return coord
 
+
+def getClosures(input_list=[7294, 274, 389]):
+    coord = []
+    for i in input_list:
+        if i in black_list:
+            coord.append(seg_to_coord[i])
+    return coord
+
+
 def getPaths(input_list=[7294, 274, 389]):
     # get start and end coords
     if len(input_list) == 1:
