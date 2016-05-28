@@ -79,6 +79,11 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
         });
     }
 
+    $scope.getPaths = function() {
+        $scope.getOptimalRoute();
+        $scope.getOriginal();
+    };
+
     $scope.optimalPaths = [];
     $scope.pathsReturned = false;
     $scope.getOptimalRoute = function() {
@@ -103,6 +108,30 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
         }, function errorCallback(response) {
             console.log('error', response);
         });
-    }
+    };
+
+    $scope.getOriginal = function() {
+        $http({
+            method: 'POST',
+            data: $scope.segmentIds,
+            url: '/original'
+        }).then(function successCallback(response) {
+            var originalCoords = response.data.original_path;
+            var optimalPaths = [];
+            _.each(originalCoords, function(pathCoords) {
+                var line = new L.Polyline(pathCoords, {
+                    color: 'yellow',
+                    weight: 5,
+                    opacity: 1,
+                    smoothFactor: 1
+                });
+                optimalPaths.push(line);
+                line.addTo(map);
+            });
+            $scope.optimalPaths = optimalPaths;
+        }, function errorCallback(response) {
+            console.log('error', response);
+        });
+    };
 
 }]);
