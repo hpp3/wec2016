@@ -1,5 +1,5 @@
 import json
-
+import parse
 import flask
 from flask import Flask, request, send_from_directory
 app = Flask(__name__, static_url_path='/static')
@@ -66,6 +66,12 @@ def get_roads():
 def get_closures():
     closures = process_coordinates(closures_features)
     ret_val = {'closures': closures}
+    return flask.jsonify(*ret_val)
+
+
+@app.route('/optimal')
+def get_optimal(segment_ids):
+    ret_val = parse.getPaths(segment_ids)
     return flask.jsonify(**ret_val)
 
 

@@ -20,7 +20,6 @@ for road in all_data['features']:
         coord_to_seg[(from_coord, to_coord)] = road['properties']['SEGMENT_ID']
         coord_to_seg[(to_coord, from_coord)] = road['properties']['SEGMENT_ID']
         seg_to_coord[road['properties']['SEGMENT_ID']] = road['geometry']['coordinates']
-
 for road in all_data['features']:
     if road['properties']['SEGMENT_ID'] in black_list:
         continue
@@ -80,8 +79,7 @@ def getPaths(input_list=[7294, 274, 389]):
                 break
             top = max(seg, key=lambda s: dist[s])
             segblacklist.add(top)
-            seg.remove(top)
-        new = astar(start, end, graph, dist, segblacklist)
+            seg.remove(top) new = astar(start, end, graph, dist, segblacklist)
         if new not in bestPaths:
             bestPaths.append(new)
 
@@ -95,8 +93,3 @@ def getPaths(input_list=[7294, 274, 389]):
             coord.extend(seg_to_coord[seg])
         pathCoords.append(coord)
     return pathCoords
-coords = getPaths()
-print(coords)
-print(len(coords))
-for (a, b) in coords[1]:
-    print(b, ',', a)
