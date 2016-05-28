@@ -6,12 +6,12 @@ def eDis(a, b):
     x2, y2 = b
     return (x2-x1)**2 + (y2-y2)**2
 
-def astar(start, goal, adj, trueDis):
-    closedSet = set() # nodes previously evaluated
+def astar(start, goal, adj, trueDis, blacklist):
+    closedSet = set()
     openSet = set([start])
-    cameFrom = {}       # most efficient previous step for a node
-    truePastScore = {start: 0} # best dis from start
-    futureScore = {start: eDis(start, goal)} # guess of dis from start to goal that passes this node
+    cameFrom = {}
+    truePastScore = {start: 0}
+    futureScore = {start: eDis(start, goal)}
 
     while openSet:
         current = min(openSet, key=lambda x: futureScore[x]) #heap this fuck
@@ -25,6 +25,10 @@ def astar(start, goal, adj, trueDis):
             continue
 
         for neighbor in adj[current]:
+            if (current, neighbor) in blacklist:
+                print('blocked')
+                continue
+
             if neighbor in closedSet:
                 continue
             distance = truePastScore[current] + trueDis[current, neighbor]

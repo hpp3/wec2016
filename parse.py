@@ -41,12 +41,28 @@ for road in all_data['features']:
             dist[(from_coord, to_coord)] = road['properties']['LENGTH_M']
 
 start = (-80.5328174269999, 43.4732988380001)
-end = (-80.5002613569999,43.511091493)
-for (a, b) in astar(start, end, graph, dist):
-    print(b, ',', a)
+end = (-80.5002613569999, 43.511091493)
 
-#optimal_path = list(reversed(astar(start, end, graph, dist)))
-#seg_path = []
-#for i in range(1, len(optimal_path)):
-#    seg_path.append(coord_to_seg[(optimal_path[i-1], optimal_path[i])])
-#print seg_path
+path = []
+segblacklist = set()
+path.append(astar(start, end, graph, dist, set()))
+for z in range(2):
+    seg = set()
+    for i in range(len(path[-1])-1):
+        seg.add((path[-1][i+1], path[-1][i]))
+    for i in range(2-z):
+        if len(seg) < 5:
+            break
+        top = max(seg, key=lambda s: dist[s])
+        segblacklist.add(top)
+        seg.remove(top)
+    path.append(astar(start, end, graph, dist, segblacklist))
+print(len(segblacklist))
+for (a, b) in path[-3]:
+    print(b, ',', a)
+print(len(segblacklist))
+for (a, b) in path[-2]:
+    print(b, ',', a)
+print(len(segblacklist))
+for (a, b) in path[-1]:
+    print(b, ',', a)
