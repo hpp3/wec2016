@@ -17,6 +17,17 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
           url: '/segments'
         }).then(function successCallback(response) {
             $scope.segments = response.data;
+            var searchList = [];
+
+            for (var id in $scope.segments) {
+                searchList.push({
+                    id: id,
+                    name: $scope.segments[id]['st'],
+                    from: $scope.segments[id]['from'],
+                    to: $scope.segments[id]['to']
+                });
+            }
+            $scope.searchList = searchList;
         }, function errorCallback(response) {
             console.log('error', response);
         });
