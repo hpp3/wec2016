@@ -48,6 +48,12 @@ for road in all_data['features']:
             graph[from_coord].append(to_coord)
             dist[(from_coord, to_coord)] = road['properties']['LENGTH_M']
 
+def getCoords(input_list=[7294, 274, 389]):
+    coord = []
+    for i in input_list:
+        coord.extend(seg_to_coord[i])
+    return coord
+
 def getPaths(input_list=[7294, 274, 389]):
     # get start and end coords
     if len(input_list) == 1:

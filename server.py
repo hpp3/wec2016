@@ -76,6 +76,11 @@ def get_optimal():
     ret_val = {'optimal_paths': parse.getPaths(segment_ids)}
     return flask.jsonify(**ret_val)
 
+@app.route('/original')
+def get_optimal(segment_ids):
+    segment_ids = map(int, segment_ids.split(","))
+    ret_val = parse.getCoords(segment_ids)
+    return flask.jsonify(**ret_val)
 
 if __name__ == '__main__':
     with open('roads.json', 'r') as f:
