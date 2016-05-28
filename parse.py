@@ -11,6 +11,16 @@ seg_to_coord = {}
 
 black_list = set([26896, 1517, 7608, 1526, 7947, 7494, 7469, 9064, 9062, 7572, 7514, 259, 1621, 29101, 30205, 7289, 274, 348, 80267])
 
+# Update coord-seg mapping and vice versa
+for road in all_data['features']:
+    from_coord = tuple(road['geometry']['coordinates'][0])
+    to_coord = tuple(road['geometry']['coordinates'][-1])
+
+    if road['geometry']['type'] == 'LineString':
+        coord_to_seg[(from_coord, to_coord)] = road['properties']['SEGMENT_ID']
+        coord_to_seg[(to_coord, from_coord)] = road['properties']['SEGMENT_ID']
+        seg_to_coord[road['properties']['SEGMENT_ID']] = road['geometry']['coordinates']
+
 for road in all_data['features']:
     if road['properties']['SEGMENT_ID'] in black_list:
         continue
@@ -19,9 +29,6 @@ for road in all_data['features']:
     to_coord = tuple(road['geometry']['coordinates'][-1])
 
     if road['geometry']['type'] == 'LineString':
-        coord_to_seg[(from_coord, to_coord)] = road['properties']['SEGMENT_ID']
-        coord_to_seg[(to_coord, from_coord)] = road['properties']['SEGMENT_ID']
-        seg_to_coord[road['properties']['SEGMENT_ID']] = road['geometry']['coordinates']
         if road['properties']['FLOW_DIR'] == 'TwoWay':
             if from_coord not in graph: 
                 graph[from_coord] = [] 
@@ -59,11 +66,6 @@ else:
 
 start = tuple(start)
 end = tuple(end)
-
-print start, end
-print seg_to_coord[input_list[-1]]
-#start = (-80.5328174269999, 43.4732988380001)
-#end = (-80.5002613569999,43.511091493)
 
 optimal_path = list(reversed(astar(start, end, graph, dist)))
 optimal_coords = []
