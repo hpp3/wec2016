@@ -79,13 +79,27 @@ app.controller('MapController', ['$scope', '$http', function($scope, $http) {
         });
     }
 
+    $scope.optimalPaths = [];
+    $scope.pathsReturned = false;
     $scope.getOptimalRoute = function() {
         $http({
             method: 'POST',
-            data: {segment_ids: $scope.segmentIds},
+            data: $scope.segmentIds,
             url: '/optimal'
         }).then(function successCallback(response) {
-            console.log('optimal', response);
+            var optimalCoords = [response.data.optimal_paths[0]];
+            var optimalPaths = [];
+            _.each(optimalCoords, function(pathCoords) {
+                var line = new L.Polyline(pathCoords, {
+                    color: 'green',
+                    weight: 5,
+                    opacity: 1,
+                    smoothFactor: 1
+                });
+                optimalPaths.push(line);
+                line.addTo(map);
+            });
+            $scope.optimalPaths = optimalPaths;
         }, function errorCallback(response) {
             console.log('error', response);
         });

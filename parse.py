@@ -106,7 +106,9 @@ def getPaths(input_list=[7294, 274, 389]):
         coord = []
         for i in range(1, len(p)):
             seg = coord_to_seg[(p[i-1], p[i])]
-            coord.extend(seg_to_coord[seg])
-        coord = [i for i in reversed(coord)]
+            c = seg_to_coord[seg]
+            c = [(b,a) for a, b in c]
+            coord.extend(c)
+        #coord = [i for i in reversed(coord)]
         pathCoords.append(coord)
     return pathCoords
